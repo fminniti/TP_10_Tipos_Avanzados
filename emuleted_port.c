@@ -1,11 +1,10 @@
-#include "emuleted_port_def.h"
 #include "emuleted_port.h"
 
-void bitSet (uint8_t id_port , uint8_t bit , Port_t port)
+void bitSet (uint8_t id_port , uint8_t bit , Port_t * port)
 {
   if(id_port == PORT_A)
   {
-    
+
   }
   else if (id_port == PORT_B)
   {
@@ -21,7 +20,7 @@ void bitClr (uint8_t id_port , uint8_t bit , Port_t port)
 {
   if(id_port == PORT_A)
   {
-    
+
   }
   else if (id_port == PORT_B)
   {

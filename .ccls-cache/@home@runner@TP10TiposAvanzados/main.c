@@ -1,9 +1,8 @@
 #include <stdio.h>
+#include <stdint.h>
+#include "emuleted_port.h"
 
 int main(void) {
-  printf("Hello World\n");
-  printf("Test\n");
-  printf("Test\n");
-  
+  Port_t port;
   return 0;
 }
