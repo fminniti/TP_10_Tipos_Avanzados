@@ -2,6 +2,8 @@
 #define EMULETED_PORT_H
 
 #include <stdint.h>
+#define MSB 7  
+// Most significant byte
 /*
 Asignacion de un valor en especifico para cada port.
 Esto permite diferenciarlos al ser uttilizados como parametros
@@ -45,5 +47,7 @@ uint8_t bitGet (uint8_t id_port , uint8_t bit , Port_t port);
 void maskOn(uint8_t id_port , Port_t * port, uint16_t mask);
 
 void maskToggle(uint8_t id_port , Port_t * port, uint16_t mask);
+
+void maskOff(uint8_t id_port , Port_t * port, uint16_t mask);
 
 #endif //EMULETED_PORT_H

@@ -1,5 +1,12 @@
 #include "emuleted_port.h"
 
+#define MASK1 -65
+//10111111
+
+#define MASK2 127
+//01111111
+
+
 void InitPort(Port_t * port){
   (*port).D = 0;
 }
@@ -34,22 +41,22 @@ Nos aseguramos que el bit elegido se apague al usar la compuerta lógica AND bit
 
 void bitClr (uint8_t id_port , uint8_t bit , Port_t * port)
 {
-if (id_port == PORT_D)  // cuando le llega PORT D, trabajamos con el A o el B segun corresponda
+  if (id_port == PORT_D)  // cuando le llega PORT D, trabajamos con el A o el B segun corresponda
   {
-    if(bit > 7){
-      bit -= 7;
+    if(bit > MSB){
+      bit -= MSB;
       id_port = PORT_A;
     } 
     else {
       id_port = PORT_B;
     }
   }
-  int8_t mask = -65;   //10111111
+  int8_t mask = MASK1;   //10111111
   
   int i;
-  if (bit == 7){ // tratamos el caso en el que el bit es el 7 por separado porque necesitamos que entren 1s por la izquierda al shiftear, no 0s. Además, no funcionaría el for.
+  if (bit == MSB){ // tratamos el caso en el que el bit es el 7 por separado porque necesitamos que entren 1s por la izquierda al shiftear, no 0s. Además, no funcionaría el for.
     
-    mask = 127;        //01111111
+    mask = MASK2;        //01111111
   } else {
     for (i = 0; i < 6-bit; i++){
     mask = mask>>1;
@@ -61,41 +68,36 @@ if (id_port == PORT_D)  // cuando le llega PORT D, trabajamos con el A o el B se
     }
   }
 }
-//SACAR LOS MAGIC NUMBERS Ej: 7, 127, -65
-
+/*
+BITGET
+Dependiendo en el PORT especificado se sigue el siguiente procedimiento:
+- Se coloca la mascara en el bit especificado
+- Se realiza una asignacion de bitwise and entre la mascara y el 
+  contenido del puerto especificado
+- Si este numero es distinto de cero, significa que es uno, por lo que devuelve
+  el mismo (1). En caso contrario devuelve (0).
+*/
 uint8_t bitGet (uint8_t id_port , uint8_t bit , Port_t port)
 {
-  uint16_t mask = 1;
+  uint16_t mascara = 1;
   int i;
   for (i = 0; i < bit; i++){
-    mask = mask<<1;
+    mascara = mascara<<1;
   }
   switch (id_port){
     case (PORT_A): 
-      port.AB.A &= mask;
-      if(port.AB.A){
-        return 1;
-      } else {
-        return 0;
-      }
+      port.AB.A &= mascara;
+      return (port.AB.A ? 1 : 0);
       break;
     
     case (PORT_B): 
-      port.AB.B &= mask;
-      if(port.AB.B){
-        return 1;
-      } else {
-        return 0;
-      }
+      port.AB.B &= mascara;
+      return(port.AB.B ? 1 : 0);
       break;
 
         case (PORT_D): 
-      port.D &= mask;
-      if(port.D){
-        return 1;
-      } else {
-        return 0;
-      }
+      port.D &= mascara;
+      return(port.D ? 1 : 0);
       break;
   }
   return 0;
@@ -110,9 +112,12 @@ Reutilizando funciones anteriores, logramos:
 */
 void bitToggle (uint8_t id_port , uint8_t bit , Port_t * port)
 {
-  if(bitGet(id_port,bit,*port)){
+  if(bitGet(id_port,bit,*port))
+  {
     bitClr(id_port,bit,port);
-  } else{
+  } 
+  else
+  {
     bitSet(id_port,bit,port);
   }
 }
